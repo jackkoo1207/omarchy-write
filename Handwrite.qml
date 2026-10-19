@@ -6,6 +6,7 @@ Item {
   id: root
 
   property bool opened: false
+  property var shell: null
   property var strokes: []
   property var currentStroke: []
   property var candidates: []
@@ -110,6 +111,17 @@ Item {
     minimumSize: Qt.size(root.winW, root.winH)
     maximumSize: Qt.size(root.winW, root.winH)
     title: "Omarchy Handwrite board"
+
+    // If the compositor closes the window (e.g. Super+W "Close window") instead
+    // of the shell's hide(), root.opened is never cleared — so the backend keeps
+    // the touchpad grabbed. Sync opened=false so the backend releases the grab.
+    onClosed: {
+      // Compositor closed the window (e.g. Super+W) without going through the
+      // shell's hide(). Release the touchpad AND fully hide so the backend exits.
+      root.opened = false
+      if (root.shell && typeof root.shell.hide === "function")
+        root.shell.hide("jack.omarchy-write")
+    }
 
     Rectangle {
       anchors.fill: parent
