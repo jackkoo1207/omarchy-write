@@ -27,6 +27,10 @@ class TouchpadReader:
     def running(self) -> bool:
         return self._proc is not None
 
+    def alive(self) -> bool:
+        """True while the child process is actually still running."""
+        return self._proc is not None and self._proc.poll() is None
+
     def start(self) -> bool:
         if self._proc is not None:
             return True

@@ -1,0 +1,14 @@
+# Python backend venv (created by install.sh)
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Legacy PySide6 app (superseded by the Quickshell QML plugin)
+omarchy_write/app.py
+omarchy_write/canvas.py
+omarchy_write/toggle.py
+omarchy_write/insert_signal.py
+omarchy_write/__main__.py

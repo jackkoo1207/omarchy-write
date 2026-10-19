@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "jack.omarchy-write",
+  "name": "Omarchy Handwrite board",
+  "version": "1.0.0",
+  "author": "jack",
+  "description": "Touchpad handwriting input for Chinese (Traditional/Simplified) with local PaddleOCR recognition.",
+  "kinds": ["panel"],
+  "entryPoints": {
+    "panel": "Handwrite.qml"
+  }
+}

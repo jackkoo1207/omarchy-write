@@ -1,4 +1,0 @@
-[console_scripts]
-omarchy-write = omarchy_write.app:main
-omarchy-write-insert = omarchy_write.insert_signal:main
-omarchy-write-toggle = omarchy_write.toggle:main
