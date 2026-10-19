@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Omarchy Handwrite board
+Name[zh_TW]=Omarchy 手寫板
+Comment=Chinese handwriting input (Traditional/Simplified) for Omarchy
+Comment[zh_TW]=繁體/簡體中文手寫輸入
+Exec=omarchy-write
+Icon=omarchy-handwrite-board
+Terminal=false
+Categories=Utility;
+StartupWMClass=omarchy-write

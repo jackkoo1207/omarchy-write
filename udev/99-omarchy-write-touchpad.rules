@@ -1,0 +1,13 @@
+# Grant jack read/write access to the touchpad so Omarchy Write can capture
+# raw multitouch events for handwriting input.
+#
+# Uses direct ownership/mode rather than the `uaccess` tag, because uaccess
+# depends on logind seat assignment and may not grant the ACL on this system.
+# Applies immediately after `udevadm trigger`; no re-login needed.
+#
+# Install:
+#   sudo cp udev/99-omarchy-write-touchpad.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload && sudo udevadm trigger
+#
+# Verify:  ls -l /dev/input/event7   (should be owned by jack)
+SUBSYSTEM=="input", ATTRS{name}=="MSFT0001:01 06CB:CE44 Touchpad", OWNER="jack", MODE="0600"

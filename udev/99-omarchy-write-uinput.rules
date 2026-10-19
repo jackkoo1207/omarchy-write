@@ -1,0 +1,3 @@
+# Grant jack access to /dev/uinput so test tooling can inject a synthetic
+# mouse (e.g. drag testing for Omarchy Write). Applies after udevadm trigger.
+KERNEL=="uinput", OWNER="jack", MODE="0600"
