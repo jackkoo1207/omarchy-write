@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/icon-128.png" alt="Omarchy Handwrite board icon">
+  <video src="assets/icon-128.png" alt="Omarchy Handwrite board icon"></video>
   <br>
   <h1 style="margin: 10px 0; font-size: 2.5rem;">Omarchy Handwrite board</h1>
   <h2 style="margin: 10px 0; font-size: 1.5rem;">繁簡手寫板</h2>
