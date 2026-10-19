@@ -3,7 +3,6 @@
   <br>
   <h1 style="margin: 10px 0; font-size: 2.5rem;">Omarchy Handwrite board</h1>
   <h2 style="margin: 10px 0; font-size: 1.5rem;">繁簡手寫板</h2>
-  <strong>繁簡手寫板</strong>
   <br>
   <span>Write
 Traditional or Simplified Chinese characters with your trackpad/Mouse.</span>
