@@ -90,6 +90,7 @@ class Backend:
         t = obj.get("type")
         if t == "show":
             self._shown = True
+            self._track_focus()  # capture target before the panel takes focus
             _emit({"type": "status", "text": f"可開始書寫 · {HOTKEY_HINT}" if self.rec.ready else "模型載入中…"})
             if not self.reader.running:
                 self.reader.start()
@@ -201,14 +202,26 @@ class Backend:
 
     # -- focus tracking -------------------------------------------------
     def _track_focus(self) -> None:
+        # The panel steals focus when summoned, so `activewindow` only ever
+        # reports the panel. Instead, find the previously-focused app via
+        # Hyprland's focusHistoryID: the highest-ID window that isn't the panel.
         try:
             out = subprocess.run(
-                ["hyprctl", "activewindow", "-j"],
+                ["hyprctl", "clients", "-j"],
                 capture_output=True, text=True, timeout=1,
             )
-            d = json.loads(out.stdout)
-            if d.get("title") != PANEL_TITLE and d.get("address"):
-                self.target_addr = d["address"]
+            clients = json.loads(out.stdout)
+            best = None
+            best_fh = -1
+            for c in clients:
+                if c.get("title") == PANEL_TITLE:
+                    continue
+                fh = c.get("focusHistoryID", -1)
+                if c.get("address") and fh > best_fh:
+                    best_fh = fh
+                    best = c
+            if best:
+                self.target_addr = best["address"]
         except Exception:  # noqa: BLE001
             pass
 
