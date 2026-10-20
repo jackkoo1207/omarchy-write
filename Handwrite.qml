@@ -7,6 +7,7 @@ Item {
 
   property bool opened: false
   property var shell: null
+  property bool grabOn: true
   property var strokes: []
   property var currentStroke: []
   property var candidates: []
@@ -56,6 +57,9 @@ Item {
       case "status":
         statusText = msg.text
         break
+      case "grab_state":
+        grabOn = msg.on
+        break
     }
   }
 
@@ -68,6 +72,7 @@ Item {
   }
   function toggle() { opened ? close() : open("") }
   function confirm() { send({ type: "confirm" }) }
+  function toggleGrab() { send({ type: "toggle_grab" }) }
 
   // Move the candidate highlight by delta (wraps), keeping the backend in sync.
   function selectBy(delta) {
@@ -147,6 +152,28 @@ Item {
           text: "⠿ Omarchy Handwrite board · 繁簡手寫"
           color: "#cdd6f4"
           font.pixelSize: 14
+        }
+      }
+
+      // touchpad grab toggle (also Super+U) — releases the touchpad so it can
+      // be used as a normal pointer, without closing the panel.
+      Rectangle {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.margins: 8
+        width: 30
+        height: 30
+        radius: 6
+        color: root.grabOn ? "#313244" : "#f38ba8"
+        Text {
+          anchors.centerIn: parent
+          text: root.grabOn ? "✍" : "🖱"
+          color: root.grabOn ? "#cdd6f4" : "#1e1e2e"
+          font.pixelSize: 15
+        }
+        MouseArea {
+          anchors.fill: parent
+          onClicked: root.toggleGrab()
         }
       }
 
@@ -288,6 +315,7 @@ Item {
     function close(): string { root.close(); return "ok" }
     function toggle(): string { root.toggle(); return "ok" }
     function confirm(): string { root.confirm(); return "ok" }
+    function toggleGrab(): string { root.toggleGrab(); return "ok" }
     function selectLeft(): string { root.selectLeft(); return "ok" }
     function selectRight(): string { root.selectRight(); return "ok" }
     function state(): string { return root.opened ? "open" : "closed" }

@@ -71,6 +71,7 @@ class Backend:
         self._last_focus = 0.0
         self._last_tp_watch = 0.0
         self._shown = False
+        self._grab_on = False
         self._running = True
 
         threading.Thread(target=self._load_model, daemon=True).start()
@@ -90,12 +91,14 @@ class Backend:
         t = obj.get("type")
         if t == "show":
             self._shown = True
+            self._grab_on = True
             self._track_focus()  # capture target before the panel takes focus
             _emit({"type": "status", "text": f"可開始書寫 · {HOTKEY_HINT}" if self.rec.ready else "模型載入中…"})
             if not self.reader.running:
                 self.reader.start()
         elif t == "hide":
             self._shown = False
+            self._grab_on = False
             self.reader.stop()
             self._reset(True)
         elif t == "select":
@@ -109,6 +112,15 @@ class Backend:
         elif t == "clear":
             self._reset(True)
             _emit({"type": "status", "text": f"可開始書寫 · {HOTKEY_HINT}" if self.rec.ready else "模型載入中…"})
+        elif t == "toggle_grab":
+            if self._grab_on:
+                self._grab_on = False
+                self.reader.stop()
+            else:
+                self._grab_on = True
+                if not self.reader.running:
+                    self.reader.start()
+            self._emit_grab_state()
         elif t == "stroke":
             phase = obj.get("phase")
             x = float(obj.get("x", 0.0))
@@ -119,6 +131,20 @@ class Backend:
         if 0 <= self.sel < len(self.cands):
             return f"選：{self.cands[self.sel]} · {HOTKEY_HINT}"
         return f"可開始書寫 · {HOTKEY_HINT}"
+
+    def _emit_grab_state(self) -> None:
+        on = self._grab_on
+        _emit({"type": "grab_state", "on": on})
+        _emit(
+            {
+                "type": "status",
+                "text": (
+                    f"觸控板抓取中 · {HOTKEY_HINT}"
+                    if on
+                    else f"觸控板已釋放 · Super+U 重新抓取"
+                ),
+            }
+        )
 
     # -- touchpad -------------------------------------------------------
     def _on_touch(self, kind: str, x: float, y: float) -> None:
@@ -260,7 +286,7 @@ class Backend:
                         self._on_touch("up", None, None)
 
             # touchpad reader watchdog: re-spawn if the child died
-            if self._shown and now - self._last_tp_watch > 1.0:
+            if self._shown and self._grab_on and now - self._last_tp_watch > 1.0:
                 self._last_tp_watch = now
                 if not self.reader.alive():
                     self.reader.stop()
